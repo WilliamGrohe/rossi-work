@@ -4,20 +4,23 @@ import { Button } from "@/components/ui/button";
 
 import { Calendar, IdCard, Phone, UserRound } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { RegisterNewLead } from "../utils/register-new-lead";
 
-type FormValues = {
+export type FormValues = {
   name: string;
   cpf: number;
   age: number;
-  phone: string;
+  phone: number;
   jobPositions: [];
   message: string;
-  curriculum: File;
+  curriculum: FileList;
 };
 
 
 function onSubmit(data: FormValues) {
+
   console.log(data);
+  RegisterNewLead(data)
   return data
 }
 
@@ -51,7 +54,7 @@ export default function FormContact() {
               required
               placeholder="000.000.000-00"
               className="p-1"
-              {...register("cpf")}
+              {...register("cpf", { valueAsNumber: true })}
             />
           </label>
         </div>
@@ -64,7 +67,7 @@ export default function FormContact() {
               required
               placeholder="Idade"
               className="p-1"
-              {...register("age")}
+              {...register("age", { valueAsNumber: true })}
             />
           </label>
         </div>
@@ -77,7 +80,7 @@ export default function FormContact() {
               id="phone"
               required
               placeholder="(54) 99123-4567"
-              {...register("phone")}
+              {...register("phone", { valueAsNumber: true })}
             />
           </label>
         </div>

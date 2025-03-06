@@ -16,8 +16,8 @@ datasource db {
 model Lead {
   id           String   @id @default(uuid())
   name         String
-  email        String
-  phone        Int
+  cpf          BigInt
+  phone        BigInt
   age          Int
   message      String
   jobPositions String[]
