@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import RossiLogo from "@/assets/logo-rossi.png";
 import FormContact from "./components/form-contact";
+import { Toaster } from "@/components/ui/sonner";
 
 
 export default function Home() {
@@ -27,6 +28,7 @@ export default function Home() {
         <section className="px-4 py-2">
           <p className="font-semibold">Preencha seus dados abaixo:</p>
           <FormContact />
+          <Toaster />
         </section>
       </main>
       <footer className="text-center text-gray-400 text-sm border p-2">
