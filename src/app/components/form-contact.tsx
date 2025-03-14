@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 
-import { Calendar, IdCard, Phone, UserRound } from "lucide-react";
+import { Calendar, FileUp, IdCard, Phone, UserRound } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {
   RegisterNewLead,
@@ -10,6 +10,7 @@ import {
 } from "../utils/register-new-lead";
 import { useState } from "react";
 import { GeneratePresignedUrl } from "../utils/generate-presigned-url";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 export type FormValues = {
   name: string;
@@ -23,6 +24,7 @@ export type FormValues = {
 
 export default function FormContact() {
   const [uploading, setUploading] = useState(false);
+  const [uploadSuccessful, setUploadSuccessful] = useState(false);
 
   const form = useForm<FormValues>();
   const { register, handleSubmit } = form;
@@ -56,10 +58,10 @@ export default function FormContact() {
       });
 
       if (uploadResponse.ok) {
-        alert("Upload realizado com sucesso!");
 
         // Registra no banco de dados o dataForm e uniqueFileName Key of Bucket
         RegisterNewLead(data, uniqueFileName);
+        setUploadSuccessful(true);
       } else {
         throw new Error("Erro ao fazer o upload");
       }
@@ -67,7 +69,9 @@ export default function FormContact() {
       console.error(error);
       alert("Erro ao fazer o upload");
     } finally {
-      setUploading(false);
+      setTimeout(() => {
+        setUploading(false);
+      }, 3000);
     }
 
     return data;
@@ -76,10 +80,23 @@ export default function FormContact() {
   return (
     <>
       <div
-        className="hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full h-full md:inset-0 max-h-full bg-black/70"
+        className={`${uploading? '' : 'hidden'} fixed top-0 right-0 left-0 z-50 justify-center items-center w-full h-full md:inset-0 max-h-full bg-black/70`}
       >
         <div className="flex h-full items-center content-center justify-items-center justify-center relative">
           <div className="flex bg-white rounded-lg shadow-sm dark:bg-gray-700 p-4">
+          {!uploadSuccessful? 
+          <div className="flex flex-col gap-2">
+            <DotLottieReact 
+              src="https://lottie.host/cfc337b0-51bf-44ea-a1b2-856f2261c152/0XI6L3AW56.lottie"
+              loop
+              autoplay
+            />
+            <h2 className=" items-center content-center self-center justify-center text-2xl font-bold">
+                Currículo enviado com sucesso!
+              </h2>
+          </div> 
+          : 
+          
             <div role="status" className="flex gap-2">
               <svg
                 aria-hidden="true"
@@ -102,6 +119,7 @@ export default function FormContact() {
                 Salvando e enviando...
               </h1>
             </div>
+}
           </div>
         </div>
       </div>
@@ -219,17 +237,19 @@ export default function FormContact() {
 
         <div className="pt-4">
           <p className="">Selecione o seu currículo</p>
-          <Button variant="outline">
+          <Button variant="outline" className="flex items-center gap-2 cursor-pointer">
+          <span><FileUp/></span>
             <input
               type="file"
               {...register("curriculum")}
               id="curriculum"
               accept=".pdf, .doc, .docx"
+
             />
           </Button>
         </div>
 
-        <button type="submit">{uploading ? "Enviando..." : "Enviar"}</button>
+        <button className="mt-4 p-2 bg-linear-to-t from-sky-500 to-indigo-500 rounded-xl w-2xs cursor-pointer text-white font-bold hover:from-indigo-700" type="submit">{uploading ? "Enviando..." : "Enviar"}</button>
       </form>
     </>
   );

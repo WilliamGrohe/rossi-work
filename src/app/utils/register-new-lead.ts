@@ -28,7 +28,7 @@ export async function RegisterNewLead(data: FormValues, uniqueFileNameKeyOnBucke
     return lead;
   } catch (error) {
     console.error(error);
-    throw new Error(error);
+    alert('Erro ao enviar currículo');
   }
 }
 
