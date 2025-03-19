@@ -192,7 +192,7 @@ export default function FormContact() {
             <label htmlFor="phone" className="flex items-center gap-1">
               <Phone size={16} />
               <input
-                type="text"
+                type="tel"
                 id="phone"
                 required
                 placeholder="(54) 99123-4567"
