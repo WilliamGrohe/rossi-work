@@ -16,10 +16,10 @@ datasource db {
 model Lead {
   id           String   @id @default(uuid())
   name         String
-  cpf          BigInt
-  phone        BigInt
+  cpf          String
+  phone        String
   age          Int
-  message      String
+  message      String?
   jobPositions String[]
   created_at   DateTime @default(now())
   curriculum   String

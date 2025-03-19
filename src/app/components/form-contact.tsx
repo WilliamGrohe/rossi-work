@@ -1,35 +1,51 @@
 "use client";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
 
 import { Calendar, FileUp, IdCard, Phone, UserRound } from "lucide-react";
-import { useForm } from "react-hook-form";
 import {
   RegisterNewLead,
   CreateUniqueKeyNameForFileUploadOnBucket,
 } from "../utils/register-new-lead";
-import { useState } from "react";
 import { GeneratePresignedUrl } from "../utils/generate-presigned-url";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 export type FormValues = {
   name: string;
-  cpf: number;
+  cpf: string;
   age: number;
-  phone: number;
-  jobPositions: [];
-  message: string;
-  curriculum: FileList;
+  phone: string;
+  jobPositions: string[];
+  message?: string;
+  // curriculum: FileList;
 };
 
+const formInputsSchema = z.object({
+  name: z.string().nonempty('O nome é obrigatório.'),
+  cpf: z.string().max(11).min(11, 'Digite todos os 11 dígitos.').nonempty('O CPF é obrigatório.'),
+  age: z.number(),
+  phone: z.string().nonempty('O telefone é obrigatório.'),
+  message: z.string().optional(),
+  jobPositions: z.string().array(),
+  curriculum: z.unknown().transform(value => {
+    return value as FileList}),
+});
+
+export type FormInputsSchema = z.infer<typeof formInputsSchema>;
 export default function FormContact() {
   const [uploading, setUploading] = useState(false);
   const [uploadSuccessful, setUploadSuccessful] = useState(false);
 
-  const form = useForm<FormValues>();
-  const { register, handleSubmit } = form;
+  const form = useForm<FormInputsSchema>({
+    resolver: zodResolver(formInputsSchema),
+  });
+  const { register, handleSubmit, formState: {errors} } = form;
 
-  async function onSubmit(data: FormValues) {
+  async function onSubmit(data: FormInputsSchema) {
     if (!data.curriculum) return;
 
     setUploading(true);
@@ -140,21 +156,23 @@ export default function FormContact() {
                 {...register("name")}
               />
             </label>
+            {errors.name && <span className="text-red-500">{errors.name.message}</span>}
           </div>
 
           <div className=" items-center justify-between gap-1 flex">
             <label htmlFor="cpf" className="flex items-center gap-1">
               <IdCard size={16} />
               <input
-                type="string"
+                type="text"
                 maxLength={11}
                 id="cpf"
                 required
                 placeholder="000.000.000-00"
                 className="p-1"
-                {...register("cpf", { valueAsNumber: true })}
+                {...register("cpf")}
               />
             </label>
+            {errors.cpf ? <span className="text-red-500">{errors.cpf.message}</span>: null}
           </div>
           <div className=" items-center justify-between gap-1 flex">
             <label htmlFor="age" className="flex items-center gap-1">
@@ -174,11 +192,11 @@ export default function FormContact() {
             <label htmlFor="phone" className="flex items-center gap-1">
               <Phone size={16} />
               <input
-                type="tel"
+                type="text"
                 id="phone"
                 required
                 placeholder="(54) 99123-4567"
-                {...register("phone", { valueAsNumber: true })}
+                {...register("phone")}
               />
             </label>
           </div>

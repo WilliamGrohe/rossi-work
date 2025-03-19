@@ -1,10 +1,10 @@
 "use server";
 
-import { FormValues } from "../components/form-contact";
+import { FormInputsSchema } from "../components/form-contact";
 import { prisma } from "./prisma";
 import { randomUUID } from "node:crypto";
 
-export async function RegisterNewLead(data: FormValues, uniqueFileNameKeyOnBucket: string) {
+export async function RegisterNewLead(data: FormInputsSchema, uniqueFileNameKeyOnBucket: string) {
   const { name, cpf, age, phone, message, jobPositions, curriculum } = data;
 
   if (!curriculum || curriculum.length === 0) {
