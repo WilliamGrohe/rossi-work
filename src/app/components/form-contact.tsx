@@ -31,8 +31,7 @@ const formInputsSchema = z.object({
   phone: z.string().nonempty('O telefone é obrigatório.'),
   message: z.string().optional(),
   jobPositions: z.string().array(),
-  curriculum: z.unknown().transform(value => {
-    return value as FileList}),
+  curriculum: z.unknown().transform((value) => value as FileList),
 });
 
 export type FormInputsSchema = z.infer<typeof formInputsSchema>;

@@ -16,7 +16,7 @@ export async function RegisterNewLead(data: FormInputsSchema, uniqueFileNameKeyO
     const lead = await prisma.lead.create({
       data: {
         name,
-        cpf,
+        cpf: String(cpf),
         age,
         phone,
         message,
