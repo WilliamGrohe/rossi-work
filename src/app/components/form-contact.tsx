@@ -14,6 +14,8 @@ import {
 import { GeneratePresignedUrl } from "../utils/generate-presigned-url";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
+import { CpfValidation } from "@/app/utils/cpf-validation"
+
 export type FormValues = {
   name: string;
   cpf: string;
@@ -26,7 +28,9 @@ export type FormValues = {
 
 const formInputsSchema = z.object({
   name: z.string().nonempty('O nome é obrigatório.'),
-  cpf: z.string().max(11).min(11, 'Digite todos os 11 dígitos.').nonempty('O CPF é obrigatório.'),
+  cpf: z.string().max(11).min(11, 'Digite todos os 11 dígitos.').nonempty('O CPF é obrigatório.').refine((cpf) => CpfValidation(cpf), {
+    message: "CPF inválido.",
+  }),
   age: z.number(),
   phone: z.string().nonempty('O telefone é obrigatório.'),
   message: z.string().optional(),
