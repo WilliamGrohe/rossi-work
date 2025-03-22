@@ -25,6 +25,7 @@ export type FormValues = {
 };
 
 const formInputsSchema = z.object({
+  DATABASE_URL: z.string().nullish(),
   name: z.string().nonempty('O nome é obrigatório.'),
   cpf: z.string().max(11).min(11, 'Digite todos os 11 dígitos.').nonempty('O CPF é obrigatório.'),
   age: z.number(),
