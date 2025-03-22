@@ -28,7 +28,7 @@ export type FormValues = {
 
 const formInputsSchema = z.object({
   name: z.string().nonempty('O nome é obrigatório.'),
-  cpf: z.string().max(11).min(11, 'Digite todos os 11 dígitos.').nonempty('O CPF é obrigatório.').refine((cpf) => CpfValidation(cpf), {
+  cpf: z.string().max(15).min(13, 'Digite todos os 11 dígitos.').nonempty('O CPF é obrigatório.').refine((cpf) => CpfValidation(cpf), {
     message: "CPF inválido.",
   }),
   age: z.number(),
@@ -42,7 +42,35 @@ export type FormInputsSchema = z.infer<typeof formInputsSchema>;
 export default function FormContact() {
   const [uploading, setUploading] = useState(false);
   const [uploadSuccessful, setUploadSuccessful] = useState(false);
+  const [cpf, setCpf] = useState("");
+  const [phone, setPhone] = useState(""); // Estado para o telefone
 
+  function formatCpf(value: string): string {
+    return value
+      .replace(/\D/g, "") // Remove todos os caracteres não numéricos
+      .replace(/(\d{3})(\d)/, "$1.$2") // Adiciona o primeiro ponto
+      .replace(/(\d{3})(\d)/, "$1.$2") // Adiciona o segundo ponto
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Adiciona o traço
+  }
+
+  function formatPhone(value: string): string {
+    return value
+      .replace(/\D/g, "") // Remove todos os caracteres não numéricos
+      .replace(/(\d{2})(\d)/, "($1) $2") // Adiciona os parênteses no DDD
+      .replace(/(\d{5})(\d)/, "$1-$2") // Adiciona o traço após os 5 primeiros dígitos
+      .replace(/(-\d{4})\d+?$/, "$1"); // Limita o número a 11 dígitos
+  }
+
+  const handleCpfChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedCpf = formatCpf(event.target.value);
+    setCpf(formattedCpf);
+  };
+
+  const handlePhoneChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedPhone = formatPhone(event.target.value);
+    setPhone(formattedPhone);
+  };
+  
   const form = useForm<FormInputsSchema>({
     resolver: zodResolver(formInputsSchema),
   });
@@ -168,11 +196,13 @@ export default function FormContact() {
               <IdCard size={16} />
               <input
                 type="text"
-                maxLength={11}
+                maxLength={14}
                 id="cpf"
                 required
                 placeholder="000.000.000-00"
                 className="p-1"
+                value={cpf}
+                onChangeCapture={handleCpfChange}
                 {...register("cpf")}
               />
             </label>
@@ -200,6 +230,8 @@ export default function FormContact() {
                 id="phone"
                 required
                 placeholder="(54) 99123-4567"
+                value={phone} // Usa o estado formatado
+            onChangeCapture={handlePhoneChange} // Aplica a máscara
                 {...register("phone")}
               />
             </label>
