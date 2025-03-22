@@ -68,8 +68,8 @@ export default function FormContact() {
         body: file,
         headers: {
           "Content-Type": file.type,
-          "Content-Length": file.size.toString(),
-          'Access-Control-Allow-Origin': '*'
+          // "Content-Length": file.size.toString(),
+          // "Access-Control-Allow-Origin": '*',
         },
       });
 
