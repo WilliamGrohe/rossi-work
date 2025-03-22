@@ -69,6 +69,7 @@ export default function FormContact() {
         headers: {
           "Content-Type": file.type,
           "Content-Length": file.size.toString(),
+          'Access-Control-Allow-Origin': '*'
         },
       });
 
