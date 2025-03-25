@@ -40,7 +40,16 @@ const formInputsSchema = z.object({
   phone: z.string().nonempty("O telefone é obrigatório."),
   message: z.string().optional(),
   jobPositions: z.string().array(),
-  curriculum: z.unknown().transform((value) => value as FileList),
+  curriculum: 
+  // z.unknown().transform((value) => value as FileList),
+  z
+    .custom<FileList>()
+    .refine((files) => files && files.length > 0, {
+      message: "O arquivo é obrigatório.",
+    })
+    .refine((files) => files && files[0]?.size <= 2 * 1024 * 1024, {
+      message: "O arquivo deve ter no máximo 2MB.",
+    }),
 });
 
 export type FormInputsSchema = z.infer<typeof formInputsSchema>;
@@ -86,11 +95,18 @@ export default function FormContact() {
   } = form;
 
   async function onSubmit(data: FormInputsSchema) {
-    if (!data.curriculum) return;
-
-    setUploading(true);
+    if (!data.curriculum || data.curriculum.length === 0) {
+      alert("O arquivo é obrigatório.");
+      return;
+    }
 
     const file = data.curriculum[0];
+  if (file.size > 2 * 1024 * 1024) {
+    alert("O arquivo deve ter no máximo 2MB.");
+    return;
+  }
+
+    setUploading(true);
 
     const uniqueFileName = await CreateUniqueKeyNameForFileUploadOnBucket(
       file.name
@@ -315,11 +331,20 @@ export default function FormContact() {
             </span>
             <input
               type="file"
-              {...register("curriculum")}
+              {...register("curriculum", {
+                validate: {
+                  lessThan2MB: (file) =>
+                    file && file[0]?.size <= 2 * 1024 * 1024 || "O arquivo deve ter no máximo 2MB.",
+                  required: (file) => file?.length > 0 || "O arquivo é obrigatório.",
+                },
+              })}
               id="curriculum"
               accept=".pdf, .doc, .docx"
             />
           </Button>
+          {errors.curriculum && (
+    <span className="text-red-500">{errors.curriculum.message}</span>
+  )}
         </div>
 
         <div className="mt-4 justify-center flex mx-auto w-full">
