@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
 
@@ -14,7 +14,7 @@ import {
 import { GeneratePresignedUrl } from "../utils/generate-presigned-url";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
-import { CpfValidation } from "@/app/utils/cpf-validation"
+import { CpfValidation } from "@/app/utils/cpf-validation";
 
 export type FormValues = {
   name: string;
@@ -27,12 +27,17 @@ export type FormValues = {
 };
 
 const formInputsSchema = z.object({
-  name: z.string().nonempty('O nome é obrigatório.'),
-  cpf: z.string().max(15).min(13, 'Digite todos os 11 dígitos.').nonempty('O CPF é obrigatório.').refine((cpf) => CpfValidation(cpf), {
-    message: "CPF inválido.",
-  }),
+  name: z.string().nonempty("O nome é obrigatório."),
+  cpf: z
+    .string()
+    .max(15)
+    .min(13, "Digite todos os 11 dígitos.")
+    .nonempty("O CPF é obrigatório.")
+    .refine((cpf) => CpfValidation(cpf), {
+      message: "CPF inválido.",
+    }),
   age: z.number(),
-  phone: z.string().nonempty('O telefone é obrigatório.'),
+  phone: z.string().nonempty("O telefone é obrigatório."),
   message: z.string().optional(),
   jobPositions: z.string().array(),
   curriculum: z.unknown().transform((value) => value as FileList),
@@ -70,11 +75,15 @@ export default function FormContact() {
     const formattedPhone = formatPhone(event.target.value);
     setPhone(formattedPhone);
   };
-  
+
   const form = useForm<FormInputsSchema>({
     resolver: zodResolver(formInputsSchema),
   });
-  const { register, handleSubmit, formState: {errors} } = form;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = form;
 
   async function onSubmit(data: FormInputsSchema) {
     if (!data.curriculum) return;
@@ -188,7 +197,9 @@ export default function FormContact() {
                 {...register("name")}
               />
             </label>
-            {errors.name && <span className="text-red-500">{errors.name.message}</span>}
+            {errors.name && (
+              <span className="text-red-500">{errors.name.message}</span>
+            )}
           </div>
 
           <div className=" items-center justify-between gap-1 flex">
@@ -206,7 +217,9 @@ export default function FormContact() {
                 {...register("cpf")}
               />
             </label>
-            {errors.cpf ? <span className="text-red-500">{errors.cpf.message}</span>: null}
+            {errors.cpf ? (
+              <span className="text-red-500">{errors.cpf.message}</span>
+            ) : null}
           </div>
           <div className=" items-center justify-between gap-1 flex">
             <label htmlFor="age" className="flex items-center gap-1">
@@ -231,7 +244,7 @@ export default function FormContact() {
                 required
                 placeholder="(54) 99123-4567"
                 value={phone} // Usa o estado formatado
-            onChangeCapture={handlePhoneChange} // Aplica a máscara
+                onChangeCapture={handlePhoneChange} // Aplica a máscara
                 {...register("phone")}
               />
             </label>
@@ -275,27 +288,27 @@ export default function FormContact() {
                 id="motorista"
                 value="motorista"
               />{" "}
-              Motorista
+              Outros
             </label>
           </div>
         </div>
-        <div className="pt-4">
+        <div className="pt-4 w-full">
           <p className="">Campo de observações</p>
           <textarea
             id="message"
-            className="bg-white border rounded-xl p-2"
-            cols={24}
-            rows={10}
+            className="bg-white border rounded-xl p-2 w-full"
+            // cols={24}
+            rows={6}
             placeholder="Descreva resumidamente suas qualificações e experiências (opcional)"
             {...register("message")}
           ></textarea>
         </div>
 
-        <div className="pt-4">
+        <div className="pt-4 mx-auto w-full">
           <p className="">Selecione o seu currículo</p>
           <Button
             variant="outline"
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer mx-auto"
           >
             <span>
               <FileUp />
@@ -309,12 +322,14 @@ export default function FormContact() {
           </Button>
         </div>
 
-        <button
-          className="mt-4 p-2 bg-linear-to-t from-sky-500 to-indigo-500 rounded-xl w-2xs cursor-pointer text-white font-bold hover:from-indigo-700"
-          type="submit"
-        >
-          {uploading ? "Enviando..." : "Enviar"}
-        </button>
+        <div className="mt-4 justify-center flex mx-auto w-full">
+          <button
+            className="p-2 bg-linear-to-t from-sky-500 to-indigo-500 rounded-xl w-2xs cursor-pointer text-white font-bold hover:from-indigo-700"
+            type="submit"
+          >
+            {uploading ? "Enviando..." : "Enviar"}
+          </button>
+        </div>
       </form>
     </>
   );
