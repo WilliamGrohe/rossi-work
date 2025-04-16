@@ -20,11 +20,22 @@ export async function POST(req: Request) {
     }, 
       process.env.JWT_SECRET!, 
     {
-      expiresIn: "1m",
+      expiresIn: "30d",
     }
   );
 
-  return NextResponse.json({ token });
+  const response = NextResponse.json({ success: true });
+
+  response.cookies.set("token", token, {
+    httpOnly: true,
+    secure: true,
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30, // 1 mes
+  });
+
+  return response;
+
+  // return NextResponse.json({ token });
  } catch (error) {
     console.error("Erro na API de login:", error);
     return NextResponse.json(

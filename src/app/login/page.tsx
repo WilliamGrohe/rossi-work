@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,20 +18,24 @@ export default function Login() {
     });
 
     if (response.ok) {
-      const { token } = await response.json();
-      localStorage.setItem("token", token); // Armazena o token no localStorage
+      // const { token } = await response.json();
+      // localStorage.setItem("token", token); // Armazena o token no localStorage
+
+    
       router.push("/dashboard"); // Redireciona para a rota protegida
+      // Cookies.set("token", token, { expires: 60 }); // Salva o token em um cookie com expiração de 60 dias
+      
     } else {
       alert("Credenciais inválidas");
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      router.push("/dashboard");
-    }
-  }, [router]);
+  // useEffect(() => {
+  //   // const token = localStorage.getItem("token");
+  //   // if (token) {
+  //   //   router.push("/dashboard");
+  //   // }
+  // }, [router]);
 
   return (
     <div className="flex items-center justify-center w-screen min-h-screen bg-blue-400">
